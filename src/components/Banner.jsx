@@ -4,8 +4,6 @@ import HighQuality from "../assets/images/icons/2.png";
 import PureGrades from "../assets/images/icons/3.png";
 import ProperRoasting from "../assets/images/icons/4.png";
 const Banner = () => {
-  //   console.log(more.6.png);
-
   const bannerInfo = [
     {
       image: AwesomeAroma,

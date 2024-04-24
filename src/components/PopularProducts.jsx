@@ -4,8 +4,41 @@ import { CgCoffee } from "react-icons/cg";
 import { IoEyeSharp } from "react-icons/io5";
 import { FaPenFancy } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { useState } from "react";
+import Swal from "sweetalert2";
 const PopularProducts = () => {
-  const coffees = useLoaderData();
+  const loadedCoffees = useLoaderData();
+  const [coffees, setCoffees] = useState(loadedCoffees);
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`http://localhost:5000/coffee/${id}/delete`, {
+          method: "DELETE",
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.deletedCount > 0) {
+              const remaining = coffees.filter((coffee) => coffee._id != id);
+              setCoffees(remaining);
+            }
+          });
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success",
+        });
+      }
+    });
+  };
   return (
     <section>
       <div
@@ -53,19 +86,24 @@ const PopularProducts = () => {
                   </p>
                 </div>
                 <div className="gap-3 flex lg:flex-col flex-row">
-                  <Link to={`/coffee/${coffee._id}`}>
-                    <div className="p-3 bg-[#D2B48C] text-white rounded-lg w-10 h-10">
-                      <IoEyeSharp />
-                    </div>
+                  <Link
+                    to={`/coffee/${coffee._id}`}
+                    className="p-3 bg-[#D2B48C] text-white rounded-lg w-10 h-10"
+                  >
+                    <IoEyeSharp />
                   </Link>
-                  <Link to={`/coffee/${coffee._id}/update`}>
-                    <div className="p-3 bg-[#3C393B] text-white rounded-lg w-10 h-10">
-                      <FaPenFancy />
-                    </div>
+                  <Link
+                    to={`/coffee/${coffee._id}/update`}
+                    className="p-3 bg-[#3C393B] text-white rounded-lg w-10 h-10"
+                  >
+                    <FaPenFancy />
                   </Link>
-                  <div className="p-3 bg-[#EA4744] text-white rounded-lg w-10 h-10">
+                  <button
+                    onClick={() => handleDelete(coffee._id)}
+                    className="p-3 bg-[#EA4744] text-white rounded-lg w-10 h-10"
+                  >
                     <MdDelete />
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
